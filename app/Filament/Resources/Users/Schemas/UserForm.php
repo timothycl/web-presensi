@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Users\Schemas;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Schema;
 use Illuminate\Validation\Rule;
@@ -67,7 +68,15 @@ class UserForm
                     ->placeholder('Pilih Perusahaan')
                     ->required(fn () => !auth()->user()->isSuperAdmin())
                     ->visible(fn () => auth()->user()->isSuperAdmin()),
-
+                Select::make('approval_status')
+                    ->label('Status Persetujuan')
+                    ->options([
+                        'pending' => 'Pending',
+                        'approved' => 'Approved',
+                        'rejected' => 'Rejected',
+                    ])
+                    ->default('pending')
+                    ->required(),
             ]);
     }
 
@@ -79,7 +88,7 @@ class UserForm
             default => 'TCL',
         };
 
-        $lastUser = \App\Models\User::where('employee_id', 'like', $prefix . '%')
+        $lastUser = \App\Models\User::withTrashed()->where('employee_id', 'like', $prefix . '%')
             ->orderByRaw("CAST(SUBSTRING(employee_id, " . (strlen($prefix) + 1) . ") AS UNSIGNED) DESC")
             ->first();
 

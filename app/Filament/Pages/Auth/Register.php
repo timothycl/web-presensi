@@ -6,6 +6,11 @@ use App\Filament\Resources\Users\Schemas\UserForm;
 use Filament\Auth\Pages\Register as BaseRegister;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
+use Filament\Auth\Events\Registered;
+use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
+use Filament\Auth\Http\Responses\Contracts\RegistrationResponse;
+use Illuminate\Database\Eloquent\Model;
 
 class Register extends BaseRegister
 {
@@ -40,6 +45,47 @@ class Register extends BaseRegister
         $data['role'] = 'employee';
         
         return $this->getUserModel()::create($data);
+    }
+
+    public function register(): ?RegistrationResponse
+    {
+        try {
+            $this->rateLimit(2);
+        } catch (\DanHarrin\LivewireRateLimiting\Exceptions\TooManyRequestsException $exception) {
+            $this->getRateLimitedNotification($exception)?->send();
+
+            return null;
+        }
+
+        $user = $this->wrapInDatabaseTransaction(function (): Model {
+            $this->callHook('beforeValidate');
+
+            $data = $this->form->getState();
+
+            $this->callHook('afterValidate');
+
+            $data = $this->mutateFormDataBeforeRegister($data);
+
+            $this->callHook('beforeRegister');
+
+            $user = $this->handleRegistration($data);
+
+            $this->form->model($user)->saveRelationships();
+
+            $this->callHook('afterRegister');
+
+            return $user;
+        });
+
+        event(new Registered($user));
+
+        $this->sendEmailVerificationNotification($user);
+
+        // Custom Behavior: Login and redirect to waiting room
+        Filament::auth()->login($user);
+        session()->regenerate();
+
+        return redirect()->route('waiting-approval');
     }
 
     public function rateLimit($maxAttempts, $decaySeconds = 60, $method = null, $component = null)

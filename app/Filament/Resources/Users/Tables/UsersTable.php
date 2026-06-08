@@ -6,8 +6,6 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
-use Filament\Actions\RestoreBulkAction;
-use Filament\Actions\Action;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
@@ -28,6 +26,15 @@ class UsersTable
                     ->searchable(),
                     TextColumn::make('role')
                     ->badge(),
+                TextColumn::make('approval_status')
+                    ->label('Status')
+                    ->badge()
+                    ->color(fn (string $state): string => match ($state) {
+                        'pending' => 'warning',
+                        'approved' => 'success',
+                        'rejected' => 'danger',
+                        default => 'gray',
+                    }),
                 TextColumn::make('company.name')
                     ->label('Perusahaan')
                     ->searchable()
@@ -55,6 +62,20 @@ class UsersTable
                     ->view('filament.tables.actions.manage-selection'),
             ])
             ->recordActions([
+                \Filament\Tables\Actions\Action::make('approve')
+                    ->label('Setujui')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->action(fn (User $record) => $record->update(['approval_status' => 'approved']))
+                    ->requiresConfirmation()
+                    ->visible(fn (User $record) => $record->approval_status === 'pending' && auth()->user()->isAdmin()),
+                \Filament\Tables\Actions\Action::make('reject')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->action(fn (User $record) => $record->update(['approval_status' => 'rejected']))
+                    ->requiresConfirmation()
+                    ->visible(fn (User $record) => $record->approval_status === 'pending' && auth()->user()->isAdmin()),
                 EditAction::make(),
             ])
             ->bulkActions([

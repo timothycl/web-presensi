@@ -10,9 +10,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use App\Models\Attendance;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 
-
-class User extends Authenticatable
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
@@ -29,6 +30,7 @@ class User extends Authenticatable
         'employee_id',
         'role',
         'company_id',
+        'approval_status',
     ];
 
     /**
@@ -77,5 +79,13 @@ class User extends Authenticatable
         return in_array($this->role, ['admin', 'superadmin']);
     }
 
+    public function canAccessPanel(Panel $panel): bool
+    {
+        if ($this->isAdmin()) {
+            return true;
+        }
+
+        return $this->approval_status === 'approved';
+    }
 
 }

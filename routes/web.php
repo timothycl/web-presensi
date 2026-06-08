@@ -77,6 +77,25 @@ Route::get('/dev/storage-link', function () {
     }
 });
 
+Route::get('/waiting-approval', function () {
+    $user = auth()->user();
+    
+    // Redirect if not logged in
+    if (!$user) {
+        return redirect()->route('filament.admin.auth.login');
+    }
+    
+    // Redirect to admin if already approved or is admin
+    if ($user->approval_status === 'approved' || $user->isAdmin()) {
+        return redirect('/admin');
+    }
+    
+    return view('waiting-approval');
+})->name('waiting-approval');
 
-
-
+Route::post('/waiting-approval/logout', function (\Illuminate\Http\Request $request) {
+    auth()->logout();
+    $request->session()->invalidate();
+    $request->session()->regenerateToken();
+    return redirect()->route('filament.admin.auth.login');
+})->name('waiting-approval.logout');

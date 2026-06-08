@@ -75,6 +75,7 @@ public function panel(Panel $panel): Panel
                 DispatchServingFilamentEvent::class,
             ])
             ->authMiddleware([
+                \App\Http\Middleware\RedirectIfUnapproved::class,
                 Authenticate::class,
             ])
             ->renderHook(
