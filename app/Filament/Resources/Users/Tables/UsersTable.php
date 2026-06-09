@@ -62,14 +62,14 @@ class UsersTable
                     ->view('filament.tables.actions.manage-selection'),
             ])
             ->recordActions([
-                \Filament\Tables\Actions\Action::make('approve')
+                \Filament\Actions\Action::make('approve')
                     ->label('Setujui')
                     ->icon('heroicon-o-check-circle')
                     ->color('success')
                     ->action(fn (User $record) => $record->update(['approval_status' => 'approved']))
                     ->requiresConfirmation()
                     ->visible(fn (User $record) => $record->approval_status === 'pending' && auth()->user()->isAdmin()),
-                \Filament\Tables\Actions\Action::make('reject')
+                \Filament\Actions\Action::make('reject')
                     ->label('Tolak')
                     ->icon('heroicon-o-x-circle')
                     ->color('danger')
@@ -82,7 +82,7 @@ class UsersTable
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
                     ForceDeleteBulkAction::make(),
-                    RestoreBulkAction::make(),
+                    \Filament\Actions\RestoreBulkAction::make(),
                 ])->label('Delete Selected Users'),
             ])
             ->checkIfRecordIsSelectableUsing(fn (User $record): bool => 

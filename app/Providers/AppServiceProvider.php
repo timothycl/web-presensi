@@ -8,6 +8,7 @@ use Dedoc\Scramble\Support\Generator\Operation;
 use Dedoc\Scramble\Support\Generator\SecurityScheme;
 use Dedoc\Scramble\Support\RouteInfo;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\URL;
 
 
 class AppServiceProvider extends ServiceProvider
@@ -25,6 +26,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if (str_contains(config('app.url'), 'https://') || request()->header('x-forwarded-proto') === 'https' || str_contains(request()->getHost(), 'ptc-group.site') || app()->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Scramble::configure()
             ->withDocumentTransformers(function (OpenApi $openApi) {
                 $openApi->secure(
