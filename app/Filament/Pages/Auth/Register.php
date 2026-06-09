@@ -81,11 +81,10 @@ class Register extends BaseRegister
 
         $this->sendEmailVerificationNotification($user);
 
-        // Custom Behavior: Login and redirect to waiting room
         Filament::auth()->login($user);
         session()->regenerate();
 
-        return redirect()->route('waiting-approval');
+        return app(RegistrationResponse::class);
     }
 
     public function rateLimit($maxAttempts, $decaySeconds = 60, $method = null, $component = null)

@@ -108,6 +108,7 @@ class LeaveResource extends Resource
         $isAdmin = auth()->user()?->isAdmin();
 
         return $table
+            ->poll('10s')
             ->contentGrid($isAdmin ? [
                 'md' => 2,
                 'xl' => 3,

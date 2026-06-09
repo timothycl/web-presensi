@@ -26,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
 
          $middleware->validateCsrfTokens(except: [
              'admin/logout',
+             'livewire/*',
          ]);
 
          $middleware->web(append: [
