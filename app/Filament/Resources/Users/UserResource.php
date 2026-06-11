@@ -25,6 +25,11 @@ class UserResource extends Resource
         return auth()->user()->isAdmin();
     }
 
+    public static function canEdit(\Illuminate\Database\Eloquent\Model $record): bool
+    {
+        return $record->approval_status !== 'pending';
+    }
+
     public static function form(Schema $schema): Schema
     {
         return UserForm::configure($schema);

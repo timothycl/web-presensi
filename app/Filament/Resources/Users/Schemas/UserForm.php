@@ -16,6 +16,13 @@ class UserForm
     {
         return $schema
             ->components([
+                \Filament\Forms\Components\FileUpload::make('photo')
+                    ->label('Foto Wajah')
+                    ->image()
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper()
+                    ->directory('user-photos'),
                 TextInput::make('name')
                     ->required(),
                 TextInput::make('email')

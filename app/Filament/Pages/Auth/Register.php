@@ -24,6 +24,16 @@ class Register extends BaseRegister
                 $this->getPasswordConfirmationFormComponent(),
                 
                 // Extra Fields for Attendance System
+                \Filament\Forms\Components\FileUpload::make('photo')
+                    ->label('Foto Wajah')
+                    ->image()
+                    ->avatar()
+                    ->imageEditor()
+                    ->circleCropper()
+                    ->directory('user-photos')
+                    ->required()
+                    ->helperText('Mohon unggah foto wajah Anda dengan jelas.'),
+
                 TextInput::make('phone')
                     ->label('Nomor Telepon')
                     ->tel()

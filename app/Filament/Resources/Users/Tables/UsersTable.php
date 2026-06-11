@@ -18,6 +18,10 @@ class UsersTable
         return $table
             ->poll('10s')
             ->columns([
+                \Filament\Tables\Columns\ImageColumn::make('photo')
+                    ->label('Foto')
+                    ->circular()
+                    ->defaultImageUrl('https://ui-avatars.com/api/?name=User&color=7F9CF5&background=EBF4FF'),
                 TextColumn::make('name')
                     ->searchable(),
                 TextColumn::make('email')
@@ -58,36 +62,24 @@ class UsersTable
                 TrashedFilter::make(),
             ])
             ->headerActions([
-                \Filament\Actions\Action::make('manage')
+                \Filament\Tables\Actions\Action::make('manage')
                     ->label('Manage')
-                    ->view('filament.tables.actions.manage-selection'),
+                    ->view('filament.tables.actions.manage-selection')
+                    ->hidden(fn (\Filament\Tables\Contracts\HasTable $livewire) => $livewire->activeTab === 'pending'),
             ])
             ->recordActions([
-                \Filament\Actions\Action::make('approve')
-                    ->label('Setujui')
-                    ->icon('heroicon-o-check-circle')
-                    ->color('success')
-                    ->action(fn (User $record) => $record->update(['approval_status' => 'approved']))
-                    ->requiresConfirmation()
-                    ->visible(fn (User $record) => $record->approval_status === 'pending' && auth()->user()->isAdmin()),
-                \Filament\Actions\Action::make('reject')
-                    ->label('Tolak')
-                    ->icon('heroicon-o-x-circle')
-                    ->color('danger')
-                    ->action(fn (User $record) => $record->update(['approval_status' => 'rejected']))
-                    ->requiresConfirmation()
-                    ->visible(fn (User $record) => $record->approval_status === 'pending' && auth()->user()->isAdmin()),
-                EditAction::make(),
+                \Filament\Tables\Actions\EditAction::make()
+                    ->hidden(fn (User $record): bool => $record->approval_status === 'pending'),
             ])
             ->bulkActions([
-                BulkActionGroup::make([
-                    DeleteBulkAction::make(),
-                    ForceDeleteBulkAction::make(),
-                    \Filament\Actions\RestoreBulkAction::make(),
+                \Filament\Tables\Actions\BulkActionGroup::make([
+                    \Filament\Tables\Actions\DeleteBulkAction::make(),
+                    \Filament\Tables\Actions\ForceDeleteBulkAction::make(),
+                    \Filament\Tables\Actions\RestoreBulkAction::make(),
                 ])->label('Delete Selected Users'),
             ])
             ->checkIfRecordIsSelectableUsing(fn (User $record): bool => 
-                auth()->user()->isSuperAdmin() || !$record->isSuperAdmin()
+                (auth()->user()->isSuperAdmin() || !$record->isSuperAdmin()) && $record->approval_status !== 'pending'
             );
     }
 }
