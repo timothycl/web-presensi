@@ -148,7 +148,7 @@ class AttendanceScanner extends Page
         Attendance::updateOrCreate(
             ['user_id' => $user->id, 'attendance_date' => $today],
             [
-                'check_in_time' => $now->format('H:i:s'),
+                'check_in_time' => $now->toDateTimeString(),
                 'check_in_latitude' => $this->latitude,
                 'check_in_longitude' => $this->longitude,
                 'check_in_photo' => $photoPath,
@@ -207,7 +207,7 @@ class AttendanceScanner extends Page
         }
 
         $attendance->update([
-            'check_out_time' => $now->format('H:i:s'),
+            'check_out_time' => $now->toDateTimeString(),
             'check_out_latitude' => $this->latitude,
             'check_out_longitude' => $this->longitude,
             'check_out_photo' => $photoPath,

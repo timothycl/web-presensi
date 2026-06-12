@@ -41,6 +41,13 @@ class AttendancesTable
                 ImageColumn::make('check_in_photo')
                     ->label('Foto Masuk')
                     ->circular()
+                    ->action(
+                        \Filament\Actions\Action::make('view_check_in_photo')
+                            ->modalHeading('Foto Masuk')
+                            ->modalContent(fn ($record) => $record->check_in_photo ? new \Illuminate\Support\HtmlString('<img src="' . \Illuminate\Support\Facades\Storage::disk('public')->url($record->check_in_photo) . '" style="width: 100%; border-radius: 0.5rem;" />') : null)
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                    )
                     ->toggleable(),
                 TextColumn::make('check_out_time')
                     ->time('H:i')
@@ -57,6 +64,13 @@ class AttendancesTable
                 ImageColumn::make('check_out_photo')
                     ->label('Foto Keluar')
                     ->circular()
+                    ->action(
+                        \Filament\Actions\Action::make('view_check_out_photo')
+                            ->modalHeading('Foto Keluar')
+                            ->modalContent(fn ($record) => $record->check_out_photo ? new \Illuminate\Support\HtmlString('<img src="' . \Illuminate\Support\Facades\Storage::disk('public')->url($record->check_out_photo) . '" style="width: 100%; border-radius: 0.5rem;" />') : null)
+                            ->modalSubmitAction(false)
+                            ->modalCancelAction(false)
+                    )
                     ->toggleable(),
                 TextColumn::make('status')
                     ->badge()

@@ -2,22 +2,22 @@
     <div style="background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(24px) saturate(180%); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 2rem; width: 100%; min-height: 480px; height: auto; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); padding: 1.75rem; font-family: sans-serif; display: flex; flex-direction: column; justify-content: space-between;">
         <div style="display: flex; flex-direction: column; gap: 1.5rem; height: 100%;">
             {{-- User Info Section --}}
-            <div style="display: flex; align-items: center; justify-content: space-between;">
-                <div style="display: flex; align-items: center; gap: 1rem;">
-                    <div style="width: 3.5rem; height: 3.5rem; border-radius: 9999px; background: #f59e0b; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 1.5rem; box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.3); border: 2px solid rgba(255, 255, 255, 0.1);">
+            <div class="max-sm:flex-col max-sm:items-start max-sm:gap-4" style="display: flex; align-items: center; justify-content: space-between;">
+                <div class="max-sm:w-full" style="display: flex; align-items: center; gap: 1rem;">
+                    <div style="width: 3.5rem; height: 3.5rem; border-radius: 9999px; background: #f59e0b; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 1.5rem; box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.3); border: 2px solid rgba(255, 255, 255, 0.1); flex-shrink: 0;">
                         {{ substr(auth()->user()->name, 0, 1) }}
                     </div>
-                    <div style="display: flex; flex-direction: column;">
+                    <div class="max-sm:w-[calc(100%-4.5rem)]" style="display: flex; flex-direction: column;">
                         <span style="color: #94a3b8; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 0.25rem;">Welcome</span>
-                        <h2 style="color: white; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.025em; line-height: 1; text-transform: uppercase; font-style: italic; margin: 0;">
+                        <h2 class="max-sm:truncate" style="color: white; font-size: 1.5rem; font-weight: 900; letter-spacing: -0.025em; line-height: 1; text-transform: uppercase; font-style: italic; margin: 0;">
                             {{ auth()->user()->name }}
                         </h2>
                     </div>
                 </div>
 
-                <form action="{{ filament()->getLogoutUrl() }}" method="post" style="margin: 0;">
+                <form action="{{ filament()->getLogoutUrl() }}" method="post" style="margin: 0;" class="max-sm:w-full">
                     @csrf
-                    <button type="submit" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.85rem; cursor: pointer; transition: all 0.3s; color: #94a3b8;">
+                    <button type="submit" class="max-sm:w-full max-sm:justify-center" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.625rem 1.25rem; background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 0.85rem; cursor: pointer; transition: all 0.3s; color: #94a3b8;">
                         <x-heroicon-m-arrow-left-on-rectangle style="width: 1.25rem; height: 1.25rem;" />
                         <span style="font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">Sign out</span>
                     </button>

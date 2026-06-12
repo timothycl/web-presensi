@@ -162,18 +162,15 @@ class LeaveResource extends Resource
                         default => 'gray',
                     }),
                 TextColumn::make('start_date')
-                    ->label('Mulai')
-                    ->date('d M Y')
-                    ->sortable(),
-                TextColumn::make('end_date')
-                    ->label('Selesai')
-                    ->date('d M Y')
+                    ->label('Tanggal')
+                    ->formatStateUsing(fn ($record) => \Carbon\Carbon::parse($record->start_date)->format('d M y') . ' - ' . \Carbon\Carbon::parse($record->end_date)->format('d M y'))
+                    ->wrap()
                     ->sortable(),
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'pending' => 'Menunggu Persetujuan',
+                        'pending' => 'Menunggu',
                         'approved' => 'Disetujui',
                         'rejected' => 'Ditolak',
                         default => $state,
@@ -183,7 +180,8 @@ class LeaveResource extends Resource
                         'approved' => 'success',
                         'rejected' => 'danger',
                         default => 'gray',
-                    }),
+                    })
+                    ->wrap(),
             ])
             ->filters([
                 //

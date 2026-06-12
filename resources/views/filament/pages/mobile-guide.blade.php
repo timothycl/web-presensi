@@ -19,7 +19,7 @@
         </div>
 
         {{-- Langkah 1: QR Code Section --}}
-        <div style="position: relative; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px; padding: 40px; margin-bottom: 40px; box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6); overflow: hidden; display: flex; flex-direction: row; flex-wrap: wrap; gap: 40px; align-items: center; justify-content: space-between;">
+        <div class="p-6 sm:p-10 flex-col lg:flex-row items-center justify-between" style="position: relative; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px; margin-bottom: 40px; box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6); overflow: hidden; display: flex; flex-wrap: wrap; gap: 40px;">
             {{-- Decorative Spotlight --}}
             <div style="position: absolute; width: 300px; height: 300px; background: radial-gradient(circle, rgba(245, 158, 11, 0.1) 0%, transparent 70%); top: -150px; right: -150px; border-radius: 50%; pointer-events: none;"></div>
 
@@ -74,9 +74,9 @@
             </div>
         </div>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px;">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
             {{-- iOS / iPhone Card --}}
-            <div style="position: relative; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px; padding: 40px; display: flex; flex-direction: column; gap: 40px; box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);">
+            <div class="p-6 sm:p-10" style="position: relative; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px; display: flex; flex-direction: column; gap: 40px; box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);">
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <div style="width: 56px; height: 56px; background: rgba(255, 255, 255, 0.05); border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.1);">
                         <x-heroicon-o-device-phone-mobile style="width: 28px; height: 28px; color: white;" />
@@ -112,7 +112,7 @@
             </div>
 
             {{-- Android Card --}}
-            <div style="position: relative; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px; padding: 40px; display: flex; flex-direction: column; gap: 40px; box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);">
+            <div class="p-6 sm:p-10" style="position: relative; background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(40px); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 40px; display: flex; flex-direction: column; gap: 40px; box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);">
                 <div style="display: flex; align-items: center; gap: 20px;">
                     <div style="width: 56px; height: 56px; background: rgba(255, 255, 255, 0.05); border-radius: 16px; display: flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, 0.1);">
                         <x-heroicon-o-command-line style="width: 28px; height: 28px; color: white;" />
@@ -149,7 +149,7 @@
         </div>
 
         {{-- Explainer Card --}}
-        <div style="margin-top: 60px; position: relative; overflow: hidden; padding: 40px; border-radius: 40px; border: 1px solid rgba(255, 255, 255, 0.08); background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);">
+        <div class="p-6 sm:p-10" style="margin-top: 60px; position: relative; overflow: hidden; border-radius: 40px; border: 1px solid rgba(255, 255, 255, 0.08); background: linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%);">
             <h3 style="color: white; font-size: 20px; font-weight: 900; text-transform: uppercase; font-style: italic; margin-bottom: 16px; margin-top: 0;">Apa itu Progressive Web App?</h3>
             <p style="color: rgba(255, 255, 255, 0.5); font-size: 14px; line-height: 1.6; font-weight: 500; font-style: italic; margin: 0;">
                 PWA memungkinkan situs web ini berfungsi seperti <span style="color: #f59e0b; font-weight: 700;">Aplikasi Native</span>. 

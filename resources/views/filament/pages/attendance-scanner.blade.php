@@ -1,7 +1,16 @@
 <x-filament-panels::page>
     <div style="max-width: 600px; margin: 0 auto; width: 100%; display: flex; flex-direction: column; gap: 2rem; font-family: 'Outfit', sans-serif;">
         {{-- Today's Attendance Status --}}
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <style>
+            @media (max-width: 640px) {
+                .responsive-grid { grid-template-columns: 1fr !important; gap: 1rem !important; }
+                .scanner-footer { flex-direction: column !important; align-items: stretch !important; gap: 1.5rem !important; padding: 1.5rem !important; }
+                .scanner-status { flex-direction: column !important; align-items: center !important; text-align: center; gap: 0.5rem !important; }
+                .scanner-actions { flex-direction: column !important; width: 100% !important; gap: 0.75rem !important; }
+                .scanner-btn { width: 100% !important; justify-content: center !important; }
+            }
+        </style>
+        <div class="responsive-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div style="background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 2rem; padding: 1.75rem; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4); position: relative; overflow: hidden;" class="group">
                 <div style="position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: #f59e0b;"></div>
                 <span style="color: #64748b; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2em; display: block; margin-bottom: 0.5rem;">Jam Masuk</span>
@@ -122,8 +131,8 @@
             </div>
 
             <!-- Scanner Footer -->
-            <div style="padding: 2rem; background: rgba(15, 23, 42, 0.9); border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between;">
-                <div id="scanner-status" style="display: flex; align-items: center; gap: 1rem;">
+            <div class="scanner-footer" style="padding: 2rem; background: rgba(15, 23, 42, 0.9); border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: space-between;">
+                <div id="scanner-status" class="scanner-status" style="display: flex; align-items: center; gap: 1rem;">
                     <div style="width: 12px; height: 12px; background: #f59e0b; border-radius: 50%; box-shadow: 0 0 15px #f59e0b; position: relative;">
                         <div style="position: absolute; inset: -4px; border: 1px solid #f59e0b; border-radius: 50%; opacity: 0.5; animation: ping 2s infinite;"></div>
                     </div>
@@ -133,9 +142,10 @@
                     </div>
                 </div>
 
-                <div style="display: flex; gap: 1rem;">
+                <div class="scanner-actions" style="display: flex; gap: 1rem;">
                     <button 
                         id="start-button"
+                        class="scanner-btn"
                         style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; padding: 1rem 2rem; border-radius: 1.25rem; border: none; cursor: pointer; box-shadow: 0 15px 30px -5px rgba(217, 119, 6, 0.4); transition: all 0.3s;"
                         onmouseover="this.style.transform='translateY(-2px) scale(1.02)'; this.style.boxShadow='0 20px 35px -5px rgba(217, 119, 6, 0.5)';"
                         onmouseout="this.style.transform='translateY(0) scale(1)'; this.style.boxShadow='0 15px 30px -5px rgba(217, 119, 6, 0.4)';"
@@ -143,11 +153,11 @@
                         Mulai Presensi
                     </button>
                     
-                    <div style="display: flex; gap: 0.5rem;">
+                    <div class="scanner-actions" style="display: flex; gap: 0.5rem;">
                         <button 
                             id="switch-button"
-                            class="hidden"
-                            style="background: rgba(255, 255, 255, 0.1); color: white; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; padding: 1rem; border-radius: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s;"
+                            class="hidden scanner-btn"
+                            style="background: rgba(255, 255, 255, 0.1); color: white; font-weight: 900; font-size: 11px; text-transform: uppercase; letter-spacing: 0.1em; padding: 1rem; border-radius: 1.25rem; border: 1px solid rgba(255, 255, 255, 0.1); cursor: pointer; transition: all 0.3s; display: none; align-items: center; justify-content: center;"
                             title="Ganti Kamera"
                         >
                             <x-heroicon-m-arrow-path style="width: 1.25rem; height: 1.25rem;" />
@@ -155,8 +165,8 @@
 
                         <button 
                             id="stop-button"
-                            class="hidden"
-                            style="background: rgba(239, 68, 68, 0.1); color: #f87171; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; padding: 1rem 2rem; border-radius: 1.25rem; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; transition: all 0.3s;"
+                            class="hidden scanner-btn"
+                            style="background: rgba(239, 68, 68, 0.1); color: #f87171; font-weight: 900; font-size: 13px; text-transform: uppercase; letter-spacing: 0.1em; padding: 1rem 2rem; border-radius: 1.25rem; border: 1px solid rgba(239, 68, 68, 0.2); cursor: pointer; transition: all 0.3s; display: none; align-items: center; justify-content: center;"
                         >
                             Berhenti
                         </button>
@@ -166,7 +176,7 @@
         </div>
 
         <!-- Info Grid -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+        <div class="responsive-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
             <div style="background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.05); padding: 1.5rem; border-radius: 2rem; display: flex; gap: 1.25rem; align-items: center;">
                 <div style="width: 3rem; height: 3rem; background: rgba(245, 158, 11, 0.1); border-radius: 1rem; display: flex; align-items: center; justify-content: center; shrink: 0;">
                     <x-heroicon-o-information-circle style="width: 1.5rem; height: 1.5rem; color: #f59e0b;" />
@@ -218,24 +228,6 @@
             let selfieCameras = []; // List of available cameras
             let selfieCurrentCamIdx = 0; // Index of current selfie camera
             let isSelfieLoading = false;
-
-            // Get Geolocation
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition(
-                    (position) => {
-                        userLat = position.coords.latitude;
-                        userLon = position.coords.longitude;
-                        locationText.innerText = `Koordinat: ${userLat.toFixed(6)}, ${userLon.toFixed(6)}`;
-                        locationText.classList.remove('italic');
-                        locationText.classList.add('text-blue-400', 'font-medium');
-                    },
-                    (error) => {
-                        console.error("Geolocation error:", error);
-                        locationText.innerText = "Gagal mendapatkan lokasi GPS. Mohon izinkan akses.";
-                        locationText.classList.add('text-danger-500');
-                    }
-                );
-            }
 
             // 1. Check for Secure Context (HTTPS/Localhost)
             if (!window.isSecureContext && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
@@ -514,16 +506,53 @@
 
             // Event Listeners for Selfie Steps
             startBtn.addEventListener('click', () => {
-                if (!userLat || !userLon) {
-                    new FilamentNotification()
-                        .title('GPS belum aktif.')
-                        .body('Mohon izinkan akses GPS di perangkat Anda sebelum memulai presensi.')
-                        .danger()
-                        .send();
-                    return;
+                if (userLat && userLon) {
+                    selfieCurrentCamIdx = 0;
+                    startSelfieCamera();
+                } else {
+                    statusText.innerText = "Meminta akses lokasi...";
+                    if (navigator.geolocation) {
+                        const geoSuccess = (position) => {
+                            userLat = position.coords.latitude;
+                            userLon = position.coords.longitude;
+                            locationText.innerText = `Koordinat: ${userLat.toFixed(6)}, ${userLon.toFixed(6)}`;
+                            locationText.classList.remove('italic');
+                            locationText.classList.add('text-blue-400', 'font-medium');
+                            
+                            selfieCurrentCamIdx = 0;
+                            startSelfieCamera();
+                        };
+
+                        const geoErrorFallback = (error) => {
+                            console.error("Geolocation error (fallback):", error);
+                            let errorMsg = 'Mohon izinkan akses lokasi (GPS) di pengaturan browser/HP Anda.';
+                            if (error.code === 1) errorMsg = 'Akses lokasi ditolak. Buka Pengaturan > Safari/Chrome > Lokasi, lalu pilih Izinkan.';
+                            else if (error.code === 2) errorMsg = 'Sinyal GPS tidak tersedia. Coba pindah ke area terbuka.';
+                            else if (error.code === 3) errorMsg = 'Pencarian lokasi timeout (terlalu lama).';
+                            
+                            statusText.innerText = "Akses GPS gagal.";
+                            new FilamentNotification()
+                                .title('Gagal Akses GPS')
+                                .body(errorMsg)
+                                .danger()
+                                .send();
+                        };
+
+                        const geoError = (error) => {
+                            console.warn("High accuracy failed, trying low accuracy...", error);
+                            // Retry without high accuracy
+                            navigator.geolocation.getCurrentPosition(geoSuccess, geoErrorFallback, { enableHighAccuracy: false, timeout: 15000 });
+                        };
+
+                        navigator.geolocation.getCurrentPosition(geoSuccess, geoError, { enableHighAccuracy: true, timeout: 8000 });
+                    } else {
+                        new FilamentNotification()
+                            .title('GPS Tidak Didukung')
+                            .body('Perangkat atau browser Anda tidak mendukung fitur lokasi.')
+                            .danger()
+                            .send();
+                    }
                 }
-                selfieCurrentCamIdx = 0;
-                startSelfieCamera();
             });
 
             // Switch selfie camera
