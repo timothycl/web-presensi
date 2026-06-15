@@ -5,10 +5,17 @@ namespace App\Filament\Pages;
 use App\Filament\Widgets\AttendanceChartWidget;
 use App\Filament\Widgets\LatestAttendanceWidget;
 use App\Filament\Widgets\StatsOverview;
-use Filament\Pages\Page;
+use Filament\Pages\Dashboard as BaseDashboard;
+use Filament\Pages\Dashboard\Concerns\HasFiltersForm;
+use Filament\Forms\Components\Select;
+use Filament\Schemas\Schema;
 
-class AttendanceStats extends Page
+class AttendanceStats extends BaseDashboard
 {
+    use HasFiltersForm;
+
+    protected static string $routePath = 'attendance-stats';
+
     protected static string|\BackedEnum|null $navigationIcon = 'heroicon-o-presentation-chart-line';
 
     protected static string|null $navigationLabel = 'Statistik Presensi';
@@ -22,8 +29,6 @@ class AttendanceStats extends Page
         return '';
     }
 
-    protected string $view = 'filament.pages.attendance-stats';
-
     public static function shouldRegisterNavigation(): bool
     {
         return auth()->user()->isAdmin();
@@ -34,16 +39,26 @@ class AttendanceStats extends Page
         return auth()->user()->isAdmin();
     }
 
-    protected function getHeaderWidgets(): array
+    public function filtersForm(Schema $schema): Schema
+    {
+        return $schema
+            ->schema([
+                Select::make('company_id')
+                    ->label('Filter Perusahaan')
+                    ->options(\App\Models\Company::pluck('name', 'id'))
+                    ->searchable()
+                    ->preload()
+                    ->extraAttributes([
+                        'style' => 'z-index: 99999 !important; position: relative;'
+                    ]),
+            ])
+            ->columns(3);
+    }
+
+    public function getWidgets(): array
     {
         return [
             StatsOverview::class,
-        ];
-    }
-
-    protected function getFooterWidgets(): array
-    {
-        return [
             AttendanceChartWidget::class,
             LatestAttendanceWidget::class,
         ];

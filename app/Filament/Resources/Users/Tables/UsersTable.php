@@ -16,7 +16,7 @@ class UsersTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->poll('10s')
+            ->deferLoading()
             ->columns([
                 \Filament\Tables\Columns\ImageColumn::make('photo')
                     ->label('Foto')
@@ -60,22 +60,29 @@ class UsersTable
             ])
             ->filters([
                 TrashedFilter::make(),
+                \Filament\Tables\Filters\SelectFilter::make('company_id')
+                    ->label('Filter Perusahaan')
+                    ->relationship('company', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
+            ->filtersLayout(\Filament\Tables\Enums\FiltersLayout::AboveContent)
+            ->filtersFormColumns(3)
             ->headerActions([
-                \Filament\Tables\Actions\Action::make('manage')
+                \Filament\Actions\Action::make('manage')
                     ->label('Manage')
                     ->view('filament.tables.actions.manage-selection')
                     ->hidden(fn (\Filament\Tables\Contracts\HasTable $livewire) => $livewire->activeTab === 'pending'),
             ])
             ->recordActions([
-                \Filament\Tables\Actions\EditAction::make()
+                \Filament\Actions\EditAction::make()
                     ->hidden(fn (User $record): bool => $record->approval_status === 'pending'),
             ])
             ->bulkActions([
-                \Filament\Tables\Actions\BulkActionGroup::make([
-                    \Filament\Tables\Actions\DeleteBulkAction::make(),
-                    \Filament\Tables\Actions\ForceDeleteBulkAction::make(),
-                    \Filament\Tables\Actions\RestoreBulkAction::make(),
+                \Filament\Actions\BulkActionGroup::make([
+                    \Filament\Actions\DeleteBulkAction::make(),
+                    \Filament\Actions\ForceDeleteBulkAction::make(),
+                    \Filament\Actions\RestoreBulkAction::make(),
                 ])->label('Delete Selected Users'),
             ])
             ->checkIfRecordIsSelectableUsing(fn (User $record): bool => 

@@ -32,6 +32,7 @@ public function panel(Panel $panel): Panel
             ->default()
             ->id('admin')
             ->path('admin')
+            ->spa()
             ->login()
             ->registration(\App\Filament\Pages\Auth\Register::class)
             ->colors([
@@ -182,12 +183,18 @@ public function panel(Panel $panel): Panel
                             --sidebar-transition: 0.45s cubic-bezier(0.4, 0, 0.2, 1);
                         }
                         /* Topbar Glass */
+                        .fi-topbar-ctn {
+                            z-index: 999999 !important;
+                            position: sticky !important;
+                        }
                         .fi-topbar, .fi-topbar nav, .fi-topbar header {
+                            position: sticky !important;
+                            top: 0 !important;
                             background: rgba(15, 23, 42, 0.45) !important;
                             backdrop-filter: blur(24px) saturate(180%) !important;
                             -webkit-backdrop-filter: blur(24px) saturate(180%) !important;
                             border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
-                            z-index: 9999 !important;
+                            z-index: 999999 !important;
                             box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(255, 255, 255, 0.02) !important;
                         }
 
@@ -421,6 +428,43 @@ public function panel(Panel $panel): Panel
                         .fi-card:focus-within,
                         .fi-section:focus-within {
                             z-index: 100 !important;
+                        }
+
+                        /* Fix Dashboard Filters / Header overlapping with widgets */
+                        .fi-header,
+                        .fi-page-header,
+                        .fi-fo-builder,
+                        form.fi-form,
+                        .fi-form,
+                        form {
+                            position: relative !important;
+                            z-index: 99 !important;
+                        }
+
+                        /* 
+                         * CRITICAL FIX FOR DROPDOWNS OVERLAPPING:
+                         * When elements have backdrop-filter, they create new stacking contexts.
+                         * Since siblings with the SAME z-index stack based on DOM order (later is on top),
+                         * dropdowns in the first element get trapped UNDER the second element.
+                         * We force earlier elements to have a HIGHER z-index.
+                         */
+                        .fi-page > *:nth-child(1),
+                        .fi-main-ctn > *:nth-child(1),
+                        .fi-page-content > *:nth-child(1) { z-index: 50 !important; position: relative !important; }
+                        
+                        .fi-page > *:nth-child(2),
+                        .fi-main-ctn > *:nth-child(2),
+                        .fi-page-content > *:nth-child(2) { z-index: 40 !important; position: relative !important; }
+                        
+                        .fi-page > *:nth-child(3),
+                        .fi-main-ctn > *:nth-child(3),
+                        .fi-page-content > *:nth-child(3) { z-index: 30 !important; position: relative !important; }
+                        
+                        /* Ensure the popovers themselves are above everything if appended to body */
+                        .choices__list--dropdown,
+                        .fi-select-dropdown,
+                        .fi-dropdown-panel {
+                            z-index: 99999 !important;
                         }
 
                         /* Stats Overview Unification */

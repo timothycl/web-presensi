@@ -4,12 +4,14 @@ namespace App\Filament\Widgets;
 
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Carbon\Carbon;
 use App\Models\Attendance;
 use App\Models\User;
 
 class StatsOverview extends BaseWidget
 {
+    use InteractsWithPageFilters;
     protected static ?int $sort = 1;
 
     public static function canView(): bool
@@ -21,13 +23,16 @@ class StatsOverview extends BaseWidget
     {
         $today = Carbon::today();
         $user = auth()->user();
+        $companyId = $this->filters['company_id'] ?? null;
 
         $totalEmployees = User::where('role', 'employee')
             ->when(! $user->isSuperAdmin(), fn ($q) => $q->where('company_id', $user->company_id))
+            ->when($user->isSuperAdmin() && $companyId, fn ($q) => $q->where('company_id', $companyId))
             ->count();
 
         $attendanceToday = Attendance::whereDate('attendance_date', $today)
-            ->when(! $user->isSuperAdmin(), fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('company_id', $user->company_id)));
+            ->when(! $user->isSuperAdmin(), fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('company_id', $user->company_id)))
+            ->when($user->isSuperAdmin() && $companyId, fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('company_id', $companyId)));
 
 
         $presentToday = $attendanceToday->count();

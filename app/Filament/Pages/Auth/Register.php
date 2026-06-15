@@ -24,6 +24,14 @@ class Register extends BaseRegister
                 $this->getPasswordConfirmationFormComponent(),
                 
                 // Extra Fields for Attendance System
+                \Filament\Forms\Components\Select::make('company_id')
+                    ->label('Perusahaan')
+                    ->options(\App\Models\Company::pluck('name', 'id'))
+                    ->required()
+                    ->searchable()
+                    ->preload()
+                    ->helperText('Pilih perusahaan tempat Anda bekerja.'),
+
                 \Filament\Forms\Components\FileUpload::make('photo')
                     ->label('Foto Wajah')
                     ->image()

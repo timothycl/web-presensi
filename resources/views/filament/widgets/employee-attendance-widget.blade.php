@@ -48,13 +48,13 @@
 
                 @if(!$attendance || !$attendance->check_out_time)
                 <a href="{{ \App\Filament\Pages\AttendanceScanner::getUrl() }}" 
-                   class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-amber-500 to-amber-400 hover:from-amber-400 hover:to-amber-300 text-slate-950 font-black uppercase tracking-widest text-sm rounded-2xl transition-all duration-300 shadow-xl shadow-amber-500/20 hover:shadow-2xl hover:shadow-amber-500/40 hover:-translate-y-1 overflow-hidden">
+                   class="group relative inline-flex items-center justify-center gap-3 px-8 py-4 bg-gradient-to-r from-violet-600 to-violet-500 hover:from-violet-500 hover:to-violet-400 text-white font-black uppercase tracking-widest text-sm rounded-2xl transition-all duration-300 shadow-xl shadow-violet-500/20 hover:shadow-2xl hover:shadow-violet-500/40 hover:-translate-y-1 overflow-hidden">
                     {{-- Shine effect on hover --}}
                     <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
                     
-                    <x-heroicon-s-qr-code class="w-6 h-6 relative z-10 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
-                    <span class="relative z-10">Scan Presensi</span>
-                    <div class="absolute inset-0 rounded-2xl ring-4 ring-amber-500/20 animate-pulse pointer-events-none"></div>
+                    <x-heroicon-s-identification class="w-6 h-6 relative z-10 group-hover:scale-110 group-hover:rotate-12 transition-transform duration-300" />
+                    <span class="relative z-10">Verifikasi Wajah</span>
+                    <div class="absolute inset-0 rounded-2xl ring-4 ring-violet-500/20 animate-pulse pointer-events-none"></div>
                 </a>
                 @else
                 <div class="flex items-center gap-3 px-8 py-4 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 font-black uppercase tracking-widest text-sm rounded-2xl">

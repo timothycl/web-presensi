@@ -2,22 +2,17 @@
 
 namespace App\Filament\Widgets;
 
-use App\Models\Company;
 use Filament\Widgets\Widget;
 
+/**
+ * @deprecated QR code widget removed — replaced by face verification.
+ */
 class CompanyQRWidget extends Widget
 {
     protected string $view = 'filament.widgets.company-q-r-widget';
 
-    protected static ?int $sort = -2;
-
-    public function getCompany()
-    {
-        return Company::getCompany();
-    }
-
     public static function canView(): bool
     {
-        return auth()->user()->isAdmin();
+        return false;
     }
 }

@@ -42,24 +42,10 @@ class CompaniesTable
             ])
             ->recordActions([
                 EditAction::make(),
-                \Filament\Actions\Action::make('download_qr')
-                    ->label('Download QR')
-                    ->icon('heroicon-o-qr-code')
-                    ->color('warning')
-                    ->url(fn (\App\Models\Company $record) => route('admin.download-qr', $record))
-                    ->openUrlInNewTab(),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make(),
-                    \Filament\Actions\BulkAction::make('regenerate_codes')
-                        ->label('Regenerate QR Codes')
-                        ->icon('heroicon-o-arrow-path')
-                        ->color('danger')
-                        ->requiresConfirmation()
-                        ->action(fn (\Illuminate\Support\Collection $records) => $records->each->update([
-                            'check_in_code' => 'IN-' . strtoupper(str()->random(10)),
-                        ])),
                 ]),
             ]);
     }

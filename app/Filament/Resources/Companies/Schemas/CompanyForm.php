@@ -66,13 +66,6 @@ class CompanyForm
                 ->required(),
                 TimePicker::make('work_end_time')
                 ->required(),
-                TextInput::make('check_in_code')
-                    ->helperText('Klik ikon putar untuk membuat kode QR baru.')
-                    ->suffixAction(
-                        fn ($state, $set) => \Filament\Actions\Action::make('generateIn')
-                            ->icon('heroicon-m-arrow-path')
-                            ->action(fn () => $set('check_in_code', 'IN-' . strtoupper(str()->random(10))))
-                    ),
             ]);
     }
 }

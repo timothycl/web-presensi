@@ -3,11 +3,13 @@
 namespace App\Filament\Widgets;
 
 use Filament\Widgets\ChartWidget;
+use Filament\Widgets\Concerns\InteractsWithPageFilters;
 use Carbon\Carbon;
 use App\Models\Attendance;
 
 class AttendanceChartWidget extends ChartWidget
 {
+    use InteractsWithPageFilters;
     protected ?string $heading = 'Statistik Kehadiran 30 Hari Terakhir';
     protected static ?int $sort = 2;
 
@@ -23,13 +25,15 @@ class AttendanceChartWidget extends ChartWidget
         $lateData = [];
         $onTimeData = [];
         $user = auth()->user();
+        $companyId = $this->filters['company_id'] ?? null;
 
         for ($i = 29; $i >= 0; $i--) {
             $date = Carbon::today()->subDays($i);
             $labels[] = $date->format('d M');
 
             $dayAttendance = Attendance::whereDate('attendance_date', $date)
-                ->when(! $user->isSuperAdmin(), fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('company_id', $user->company_id)));
+                ->when(! $user->isSuperAdmin(), fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('company_id', $user->company_id)))
+                ->when($user->isSuperAdmin() && $companyId, fn ($q) => $q->whereHas('user', fn ($uq) => $uq->where('company_id', $companyId)));
 
             $onTimeData[] = (clone $dayAttendance)->where('status', 'on_time')->count();
             $lateData[]   = (clone $dayAttendance)->where('status', 'late')->count();

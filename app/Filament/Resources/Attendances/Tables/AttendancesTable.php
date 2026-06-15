@@ -17,7 +17,7 @@ class AttendancesTable
     public static function configure(Table $table): Table
     {
         return $table
-            ->poll('10s')
+            ->deferLoading()
             ->columns([
                 TextColumn::make('user.name')
                     ->searchable()
@@ -90,7 +90,21 @@ class AttendancesTable
             ])
             ->filters([
                 TrashedFilter::make(),
+                \Filament\Tables\Filters\SelectFilter::make('company_id')
+                    ->label('Perusahaan')
+                    ->options(\App\Models\Company::pluck('name', 'id'))
+                    ->query(function (\Illuminate\Database\Eloquent\Builder $query, array $data) {
+                        if (!empty($data['value'])) {
+                            $query->whereHas('user', function (\Illuminate\Database\Eloquent\Builder $query) use ($data) {
+                                $query->where('company_id', $data['value']);
+                            });
+                        }
+                    })
+                    ->searchable()
+                    ->preload(),
             ])
+            ->filtersLayout(\Filament\Tables\Enums\FiltersLayout::AboveContent)
+            ->filtersFormColumns(3)
             ->recordActions([
                 EditAction::make(),
             ])
