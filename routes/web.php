@@ -43,6 +43,21 @@ Route::get('/dev/storage-link', function () {
     }
 });
 
+Route::get('/dev/clear', function () {
+    try {
+        \Illuminate\Support\Facades\Artisan::call('optimize:clear');
+        return response()->json([
+            'success' => true,
+            'output' => \Illuminate\Support\Facades\Artisan::output()
+        ]);
+    } catch (\Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => $e->getMessage()
+        ], 500);
+    }
+});
+
 Route::get('/waiting-approval', function () {
     $user = auth()->user();
     
@@ -77,20 +92,55 @@ Route::get('/face-reference', function () {
 
     $user = auth()->user();
 
-    if (!$user->photo) {
+    // Check if user has face photos registered (3-pose) or legacy single photo
+    $hasFacePhotos = $user->face_photo_front && $user->face_photo_right && $user->face_photo_left;
+    $hasLegacyPhoto = $user->photo;
+
+    if (!$hasFacePhotos && !$hasLegacyPhoto) {
         return response()->json([
             'success' => false,
-            'message' => 'Foto profil belum diatur. Silakan upload foto profil terlebih dahulu.',
+            'message' => 'Foto profil belum diatur. Silakan daftarkan wajah terlebih dahulu.',
         ], 404);
     }
 
-    $photoUrl = str_starts_with($user->photo, 'http')
-        ? $user->photo
-        : \Illuminate\Support\Facades\Storage::disk('public')->url($user->photo);
+    $getUrl = function ($path) {
+        if (!$path) return null;
+        if (str_starts_with($path, 'http')) return $path;
+        
+        // Check if file exists in the face-photos disk first
+        if (\Illuminate\Support\Facades\Storage::disk('face-photos')->exists($path)) {
+            return \Illuminate\Support\Facades\Storage::disk('face-photos')->url($path);
+        }
+        
+        // Fallback: check public disk (for legacy photos with profile-photos/ prefix)
+        if (\Illuminate\Support\Facades\Storage::disk('public')->exists($path)) {
+            return \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+        }
+        
+        // Last resort: try face-photos disk URL anyway
+        return \Illuminate\Support\Facades\Storage::disk('face-photos')->url($path);
+    };
 
+    // If 3-pose photos exist, return all of them
+    if ($hasFacePhotos) {
+        return response()->json([
+            'success' => true,
+            'multi_pose' => true,
+            'photos' => [
+                'front' => $getUrl($user->face_photo_front),
+                'right' => $getUrl($user->face_photo_right),
+                'left'  => $getUrl($user->face_photo_left),
+            ],
+            'photo_url' => $getUrl($user->face_photo_front), // backward compat
+            'user_name' => $user->name,
+        ]);
+    }
+
+    // Fallback: legacy single photo
     return response()->json([
         'success' => true,
-        'photo_url' => $photoUrl,
+        'multi_pose' => false,
+        'photo_url' => $getUrl($user->photo),
         'user_name' => $user->name,
     ]);
 })->name('face-reference');

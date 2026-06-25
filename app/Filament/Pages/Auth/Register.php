@@ -62,7 +62,73 @@ class Register extends BaseRegister
         // Selalu set role sebagai employee untuk pendaftaran mandiri
         $data['role'] = 'employee';
         
+        // Compress photo to 10kb
+        if (isset($data['photo'])) {
+            $path = \Illuminate\Support\Facades\Storage::disk('public')->path($data['photo']);
+            if (file_exists($path)) {
+                $imageData = file_get_contents($path);
+                $compressed = $this->compressImageTo10Kb($imageData);
+                file_put_contents($path, $compressed);
+            }
+        }
+        
         return $this->getUserModel()::create($data);
+    }
+
+    protected function compressImageTo10Kb($imageData)
+    {
+        $image = @imagecreatefromstring($imageData);
+        if (!$image) {
+            return $imageData;
+        }
+
+        $width = imagesx($image);
+        $height = imagesy($image);
+
+        $maxWidth = 320;
+        if ($width > $maxWidth) {
+            $ratio = $maxWidth / $width;
+            $newWidth = $maxWidth;
+            $newHeight = $height * $ratio;
+
+            $newImage = imagecreatetruecolor((int)$newWidth, (int)$newHeight);
+            imagecopyresampled($newImage, $image, 0, 0, 0, 0, (int)$newWidth, (int)$newHeight, $width, $height);
+            imagedestroy($image);
+            $image = $newImage;
+        }
+
+        $quality = 80;
+        ob_start();
+        imagejpeg($image, null, $quality);
+        $compressedData = ob_get_clean();
+
+        while (strlen($compressedData) > 10240 && $quality > 10) {
+            $quality -= 10;
+            ob_start();
+            imagejpeg($image, null, $quality);
+            $compressedData = ob_get_clean();
+        }
+
+        $width = imagesx($image);
+        $height = imagesy($image);
+        while (strlen($compressedData) > 10240 && $width > 50) {
+            $width = (int) ($width * 0.8);
+            $height = (int) ($height * 0.8);
+
+            $newImage = imagecreatetruecolor($width, $height);
+            imagecopyresampled($newImage, $image, 0, 0, 0, 0, $width, $height, imagesx($image), imagesy($image));
+            
+            ob_start();
+            imagejpeg($newImage, null, $quality);
+            $compressedData = ob_get_clean();
+            
+            imagedestroy($image);
+            $image = $newImage;
+        }
+
+        imagedestroy($image);
+
+        return $compressedData;
     }
 
     public function register(): ?RegistrationResponse

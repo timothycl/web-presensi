@@ -616,6 +616,12 @@ public function panel(Panel $panel): Panel
                             border-color: rgba(239, 68, 68, 0.3) !important;
                             color: rgb(248, 113, 113) !important;
                         }
+
+                        /* Fix Notifications Topbar Overlap */
+                        .fi-no {
+                            z-index: 9999999 !important;
+                            margin-top: 5rem !important;
+                        }
                     </style>
                     <script>
                         // Sidebar State Watcher

@@ -20,6 +20,8 @@ class AttendanceScanner extends Page
     protected static string|null $title = 'Presensi Verifikasi Wajah';
 
     protected static string|\UnitEnum|null $navigationGroup = 'Presensi';
+
+    protected static ?int $navigationSort = 2;
     
     public static function shouldRegisterNavigation(): bool
     {
@@ -44,76 +46,13 @@ class AttendanceScanner extends Page
     }
 
     /**
-     * Get the reference face photo URL for the current user.
-     * Returns null if no photo is set.
+     * Check if the current user has registered face photos.
      */
-    public function getUserFacePhotoUrl(): ?string
+    public function hasFaceRegistered(): bool
     {
         $user = Auth::user();
-        if (!$user || !$user->photo) {
-            return null;
-        }
-        // Supports both full URL and storage path
-        if (str_starts_with($user->photo, 'http')) {
-            return $user->photo;
-        }
-        return \Illuminate\Support\Facades\Storage::disk('public')->url($user->photo);
+        return $user->face_photo_front && $user->face_photo_right && $user->face_photo_left;
     }
-
-    /**
-     * Register a face by saving the captured photo as the user's profile photo.
-     *
-     * @param string $base64Photo Base64 encoded photo from webcam
-     */
-    public function registerFace(string $base64Photo): void
-    {
-        $user = Auth::user();
-
-        if ($user->role !== 'employee') {
-            Notification::make()
-                ->title('Hanya karyawan yang dapat mendaftarkan wajah.')
-                ->danger()
-                ->send();
-            return;
-        }
-
-        // Decode base64 image
-        $imageData = $base64Photo;
-        if (str_contains($imageData, ',')) {
-            $imageData = explode(',', $imageData)[1];
-        }
-
-        $decoded = base64_decode($imageData);
-        if (!$decoded) {
-            Notification::make()
-                ->title('Gagal memproses foto.')
-                ->body('Format foto tidak valid. Coba ulangi.')
-                ->danger()
-                ->send();
-            return;
-        }
-
-        // Delete old profile photo if exists and it's a local file
-        if ($user->photo && !str_starts_with($user->photo, 'http')) {
-            \Illuminate\Support\Facades\Storage::disk('public')->delete($user->photo);
-        }
-
-        // Save new face photo as profile photo
-        $filename = 'profile-photos/face_' . $user->id . '_' . time() . '.jpg';
-        \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $decoded);
-
-        // Update user profile photo
-        $user->update(['photo' => $filename]);
-
-        Notification::make()
-            ->title('Wajah Berhasil Didaftarkan!')
-            ->body('Foto wajah Anda telah disimpan sebagai foto profil. Silakan lakukan verifikasi wajah kembali.')
-            ->success()
-            ->send();
-
-        $this->dispatch('face-registered');
-    }
-
 
     /**
      * Process attendance via face verification (no barcode needed).
@@ -122,7 +61,7 @@ class AttendanceScanner extends Page
      * @param float $lon User longitude
      * @param string|null $selfiePhoto Base64 encoded selfie image
      */
-    public function processAttendance($lat, $lon, $selfiePhoto = null)
+    public function processAttendance($lat, $lon, $photo = null)
     {
         $this->latitude = $lat;
         $this->longitude = $lon;
@@ -139,7 +78,7 @@ class AttendanceScanner extends Page
         }
 
         // 1. Verify user has reference photo
-        if (!$user->photo) {
+        if (!$this->hasFaceRegistered() && !$user->photo) {
             Notification::make()
                 ->title('Foto profil belum ada.')
                 ->body('Silakan upload foto profil terlebih dahulu agar verifikasi wajah dapat dilakukan.')
@@ -177,9 +116,9 @@ class AttendanceScanner extends Page
             ->first();
 
         if (!$attendance || !$attendance->check_in_time) {
-            $this->handleCheckIn($user, $today, $now, $company, $selfiePhoto);
+            $this->handleCheckIn($user, $today, $now, $company, $photo);
         } elseif (!$attendance->check_out_time) {
-            $this->handleCheckOut($user, $today, $now, $selfiePhoto);
+            $this->handleCheckOut($user, $today, $now, $photo);
         } else {
             Notification::make()
                 ->title('Anda sudah menyelesaikan presensi hari ini.')
@@ -188,16 +127,8 @@ class AttendanceScanner extends Page
         }
     }
 
-    protected function handleCheckIn($user, $today, $now, $company, $selfiePhoto)
+    protected function handleCheckIn($user, $today, $now, $company, $photo = null)
     {
-        if (!$selfiePhoto) {
-            Notification::make()
-                ->title('Foto selfie wajib diambil.')
-                ->danger()
-                ->send();
-            return;
-        }
-
         $attendance = Attendance::where('user_id', $user->id)
             ->whereDate('attendance_date', $today)
             ->first();
@@ -210,21 +141,12 @@ class AttendanceScanner extends Page
             return;
         }
 
-        // Save Selfie Photo
-        $photoPath = $this->saveSelfie($selfiePhoto, 'check_in', $user->id);
-
-        if (!$photoPath) {
-            Notification::make()
-                ->title('Gagal menyimpan foto selfie.')
-                ->danger()
-                ->send();
-            return;
-        }
-
         // Calculate status (on_time or late)
         $workStartTime = $company->work_start_time->format('H:i:s');
         $checkInTime = $now->format('H:i:s');
         $status = $checkInTime > $workStartTime ? 'late' : 'on_time';
+
+        $photoPath = $photo ? $this->saveAttendancePhoto($user, 'check_in', $photo) : $user->face_photo_front;
 
         Attendance::updateOrCreate(
             ['user_id' => $user->id, 'attendance_date' => $today],
@@ -246,16 +168,8 @@ class AttendanceScanner extends Page
         $this->dispatch('attendance-success');
     }
 
-    protected function handleCheckOut($user, $today, $now, $selfiePhoto)
+    protected function handleCheckOut($user, $today, $now, $photo = null)
     {
-        if (!$selfiePhoto) {
-            Notification::make()
-                ->title('Foto selfie wajib diambil.')
-                ->danger()
-                ->send();
-            return;
-        }
-
         $attendance = Attendance::where('user_id', $user->id)
             ->whereDate('attendance_date', $today)
             ->first();
@@ -276,16 +190,7 @@ class AttendanceScanner extends Page
             return;
         }
 
-        // Save Selfie Photo
-        $photoPath = $this->saveSelfie($selfiePhoto, 'check_out', $user->id);
-
-        if (!$photoPath) {
-            Notification::make()
-                ->title('Gagal menyimpan foto selfie.')
-                ->danger()
-                ->send();
-            return;
-        }
+        $photoPath = $photo ? $this->saveAttendancePhoto($user, 'check_out', $photo) : null;
 
         $attendance->update([
             'check_out_time' => $now->toDateTimeString(),
@@ -303,28 +208,7 @@ class AttendanceScanner extends Page
         $this->dispatch('attendance-success');
     }
 
-    protected function saveSelfie($base64String, $prefix, $userId)
-    {
-        if (!$base64String) {
-            return null;
-        }
 
-        // Clean base64 string
-        if (str_contains($base64String, ',')) {
-            $base64String = explode(',', $base64String)[1];
-        }
-
-        $decoded = base64_decode($base64String);
-        if (!$decoded) {
-            return null;
-        }
-
-        $filename = 'attendance/photos/' . $prefix . '_' . $userId . '_' . time() . '.jpg';
-        
-        \Illuminate\Support\Facades\Storage::disk('public')->put($filename, $decoded);
-
-        return $filename;
-    }
 
     protected function isWithinRadius($company)
     {
@@ -360,4 +244,19 @@ class AttendanceScanner extends Page
 
         return $earthRadius * $c;
     }
+
+    protected function saveAttendancePhoto($user, $type, $base64Photo)
+    {
+        if (str_contains($base64Photo, ',')) {
+            $base64Photo = explode(',', $base64Photo)[1];
+        }
+        
+        $decoded = base64_decode($base64Photo);
+        if (!$decoded) return $user->face_photo_front ?? $user->photo;
+
+        $filename = 'attendance_' . $user->id . '_' . $type . '_' . time() . '.jpg';
+        \Illuminate\Support\Facades\Storage::disk('public')->put('attendance/' . $filename, $decoded);
+        return 'attendance/' . $filename;
+    }
+
 }

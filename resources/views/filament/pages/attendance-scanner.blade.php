@@ -172,7 +172,7 @@
                         <div style="position:absolute; top:-2px; left:50%; transform:translateX(-50%); width:40px; height:3px; background:#7c3aed; border-radius:9999px; opacity:0.8;"></div>
                         <div style="position:absolute; bottom:-2px; left:50%; transform:translateX(-50%); width:40px; height:3px; background:#7c3aed; border-radius:9999px; opacity:0.8;"></div>
                     </div>
-                    <div style="position:absolute; top:0; left:0; width:100%; height:2px; background:linear-gradient(to right, transparent, #7c3aed, transparent); box-shadow:0 0 15px #7c3aed; animation:scanMove 3s infinite ease-in-out;"></div>
+                    <div id="scan-line" style="display:none; position:absolute; top:0; left:0; width:100%; height:2px; background:linear-gradient(to right, transparent, #7c3aed, transparent); box-shadow:0 0 15px #7c3aed; animation:scanMove 3s infinite ease-in-out;"></div>
                 </div>
 
                 {{-- ── Success State ── --}}
@@ -206,15 +206,15 @@
                     {{-- Buttons --}}
                     <div style="display:flex; flex-direction:column; gap:0.75rem; width:100%; max-width:280px;">
                         {{-- Primary: Daftarkan Wajah --}}
-                        <button id="open-register-btn"
-                            style="width:100%; background:linear-gradient(135deg, #059669, #10b981); color:white; font-weight:900; font-size:12px; text-transform:uppercase; letter-spacing:0.15em; padding:1rem 1.5rem; border-radius:1.25rem; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.6rem; box-shadow:0 10px 30px -5px rgba(16,185,129,0.45); transition:all 0.3s;"
+                        <a href="{{ \App\Filament\Pages\FaceRegistration::getUrl() }}"
+                            style="width:100%; background:linear-gradient(135deg, #059669, #10b981); color:white; font-weight:900; font-size:12px; text-transform:uppercase; letter-spacing:0.15em; padding:1rem 1.5rem; border-radius:1.25rem; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.6rem; box-shadow:0 10px 30px -5px rgba(16,185,129,0.45); transition:all 0.3s; text-decoration:none;"
                             onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 15px 35px -5px rgba(16,185,129,0.55)';"
                             onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 10px 30px -5px rgba(16,185,129,0.45)';">
                             <svg style="width:1rem; height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                             </svg>
                             Daftarkan Wajah Saya
-                        </button>
+                        </a>
 
                         {{-- Secondary: Coba Lagi --}}
                         <button id="retry-from-unrecognized-btn"
@@ -238,34 +238,18 @@
                         <p style="color:#64748b; font-size:10px; font-weight:600; line-height:1.6; margin:0; max-width:260px;">Anda belum mendaftarkan wajah.<br>Daftarkan sekarang untuk dapat melakukan presensi.</p>
                     </div>
                     <div style="width:100%; max-width:280px;">
-                        <button id="open-register-from-no-photo-btn"
-                            style="width:100%; background:linear-gradient(135deg, #059669, #10b981); color:white; font-weight:900; font-size:12px; text-transform:uppercase; letter-spacing:0.15em; padding:1rem 1.5rem; border-radius:1.25rem; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.6rem; box-shadow:0 10px 30px -5px rgba(16,185,129,0.45); transition:all 0.3s;"
+                        <a href="{{ \App\Filament\Pages\FaceRegistration::getUrl() }}"
+                            style="width:100%; background:linear-gradient(135deg, #059669, #10b981); color:white; font-weight:900; font-size:12px; text-transform:uppercase; letter-spacing:0.15em; padding:1rem 1.5rem; border-radius:1.25rem; border:none; cursor:pointer; display:flex; align-items:center; justify-content:center; gap:0.6rem; box-shadow:0 10px 30px -5px rgba(16,185,129,0.45); transition:all 0.3s; text-decoration:none;"
                             onmouseover="this.style.transform='translateY(-2px)';"
                             onmouseout="this.style.transform='translateY(0)';">
                             <svg style="width:1rem; height:1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4.5v15m7.5-7.5h-15" />
                             </svg>
                             Daftarkan Wajah Sekarang
-                        </button>
+                        </a>
                     </div>
                 </div>
 
-                {{-- ── Registered Success ── --}}
-                <div id="registered-state" style="display:none; position:absolute; inset:0; flex-direction:column; align-items:center; justify-content:center; gap:1.5rem; background:rgba(15,23,42,0.95); z-index:35; padding:2rem;">
-                    <div style="width:100px; height:100px; background:rgba(16,185,129,0.15); border-radius:50%; border:3px solid #10b981; display:flex; align-items:center; justify-content:center; animation:successPop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; box-shadow:0 0 40px rgba(16,185,129,0.4);">
-                        <svg style="width:3rem; height:3rem; color:#10b981;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.5 12.75l6 6 9-13.5" />
-                        </svg>
-                    </div>
-                    <div style="text-align:center;">
-                        <p style="color:#10b981; font-size:14px; font-weight:900; text-transform:uppercase; letter-spacing:0.2em; margin:0 0 0.5rem;">Wajah Berhasil Didaftarkan!</p>
-                        <p style="color:#64748b; font-size:10px; font-weight:600; margin:0;">Silakan mulai verifikasi kembali</p>
-                    </div>
-                    <button id="start-after-register-btn"
-                        style="background:linear-gradient(135deg, #7c3aed, #6d28d9); color:white; font-weight:900; font-size:12px; text-transform:uppercase; letter-spacing:0.15em; padding:0.875rem 2rem; border-radius:1.25rem; border:none; cursor:pointer; box-shadow:0 10px 25px -5px rgba(109,40,217,0.5); transition:all 0.3s;">
-                        Mulai Verifikasi
-                    </button>
-                </div>
 
                 {{-- Status badge (shown during detection) --}}
                 <div id="face-status-badge" style="display:none; position:absolute; bottom:1.5rem; left:50%; transform:translateX(-50%); padding:0.5rem 1.25rem; border-radius:9999px; font-size:10px; font-weight:800; text-transform:uppercase; letter-spacing:0.1em; z-index:15; white-space:nowrap;"></div>
@@ -291,7 +275,13 @@
                         <svg style="width:1.1rem; height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                         </svg>
-                        Mulai Verifikasi
+                        @if(!$attendance || !$attendance->check_in_time)
+                            Mulai Presensi Masuk
+                        @elseif(!$attendance->check_out_time)
+                            Mulai Presensi Pulang
+                        @else
+                            Presensi Selesai
+                        @endif
                     </button>
 
                     <button id="stop-button" class="hidden scanner-btn"
@@ -302,86 +292,6 @@
             </div>
         </div>
 
-        {{-- ═══════════════════════════════════════════════════════════ --}}
-        {{-- PANEL: Pendaftaran Wajah                                    --}}
-        {{-- ═══════════════════════════════════════════════════════════ --}}
-        <div id="register-panel" class="hidden register-panel" style="background:rgba(15,23,42,0.82); backdrop-filter:blur(30px); border:1px solid rgba(16,185,129,0.25); border-radius:2.5rem; overflow:hidden; box-shadow:0 40px 80px -20px rgba(0,0,0,0.8);">
-
-            {{-- Header --}}
-            <div style="padding:2rem 2rem 1.25rem; background:linear-gradient(135deg, rgba(5,150,105,0.12), rgba(16,185,129,0.06)); border-bottom:1px solid rgba(16,185,129,0.15); display:flex; align-items:center; gap:1rem;">
-                <div style="width:2.5rem; height:2.5rem; background:rgba(16,185,129,0.15); border-radius:0.875rem; display:flex; align-items:center; justify-content:center; flex-shrink:0;">
-                    <svg style="width:1.25rem; height:1.25rem; color:#10b981;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
-                    </svg>
-                </div>
-                <div>
-                    <h3 style="color:white; font-size:14px; font-weight:900; text-transform:uppercase; letter-spacing:0.15em; margin:0 0 0.2rem;">Daftarkan Wajah</h3>
-                    <p style="color:#64748b; font-size:10px; font-weight:600; margin:0;">Foto ini akan tersimpan sebagai foto profil Anda</p>
-                </div>
-                <button id="close-register-panel-btn"
-                    style="margin-left:auto; width:2rem; height:2rem; background:rgba(255,255,255,0.06); border:1px solid rgba(255,255,255,0.1); border-radius:50%; color:#64748b; cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; flex-shrink:0;"
-                    onmouseover="this.style.background='rgba(239,68,68,0.15)'; this.style.color='#f87171';"
-                    onmouseout="this.style.background='rgba(255,255,255,0.06)'; this.style.color='#64748b';">
-                    <svg style="width:0.875rem; height:0.875rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-            </div>
-
-            {{-- Camera area --}}
-            <div style="padding:2rem; display:flex; flex-direction:column; align-items:center; gap:1.5rem;">
-
-                {{-- Video Circle --}}
-                <div style="position:relative; width:260px; height:260px; border-radius:50%; overflow:hidden; border:4px solid rgba(16,185,129,0.5); box-shadow:0 0 40px rgba(16,185,129,0.2); background:#000; flex-shrink:0;">
-                    <video id="register-video" style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1);" autoplay playsinline muted></video>
-                    <img id="register-preview" style="display:none; width:100%; height:100%; object-fit:cover; transform:scaleX(-1);" alt="preview" />
-
-                    {{-- Loading overlay --}}
-                    <div id="register-loading" style="position:absolute; inset:0; background:rgba(15,23,42,0.85); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:0.75rem; border-radius:50%;">
-                        <svg style="width:2.5rem; height:2.5rem; color:#10b981; animation:spin 1s linear infinite;" fill="none" viewBox="0 0 24 24">
-                            <circle style="opacity:0.25;" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path style="opacity:0.75;" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                        <span style="color:#10b981; font-size:9px; font-weight:800; text-transform:uppercase; letter-spacing:0.15em;">Memuat Kamera...</span>
-                    </div>
-
-                    {{-- Guide overlay --}}
-                    <div id="register-guide-overlay" style="display:none; position:absolute; inset:0; pointer-events:none; border:15px solid rgba(15,23,42,0.5); border-radius:50%; display:flex; align-items:center; justify-content:center;">
-                        <div style="width:90%; height:90%; border:2px dashed rgba(16,185,129,0.4); border-radius:50%;"></div>
-                    </div>
-                </div>
-
-                <p id="register-hint" style="color:#64748b; font-size:10px; text-transform:uppercase; font-weight:800; letter-spacing:0.15em; text-align:center; margin:0;">Posisikan wajah di dalam lingkaran</p>
-
-                {{-- Action Buttons --}}
-                <div style="display:flex; flex-direction:column; gap:0.75rem; width:100%; max-width:320px;">
-                    {{-- Capture --}}
-                    <button id="capture-register-btn" class="hidden"
-                        style="width:100%; background:linear-gradient(135deg, #059669, #10b981); color:white; font-weight:900; font-size:12px; text-transform:uppercase; letter-spacing:0.15em; padding:1rem; border-radius:1.25rem; border:none; cursor:pointer; display:none; align-items:center; justify-content:center; gap:0.5rem; box-shadow:0 10px 20px -5px rgba(16,185,129,0.4); transition:all 0.3s;">
-                        <svg style="width:1.25rem; height:1.25rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6.827 6.175A2.31 2.31 0 015.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 002.25 2.25h15A2.25 2.25 0 0021.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 00-1.134-.175 2.31 2.31 0 01-1.64-1.055l-.822-1.316a2.192 2.192 0 00-1.736-1.039 48.774 48.774 0 00-5.232 0 2.192 2.192 0 00-1.736 1.039l-.821 1.316z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16.5 12.75a4.5 4.5 0 11-9 0 4.5 4.5 0 019 0zM18.75 10.5h.008v.008h-.008V10.5z" />
-                        </svg>
-                        Ambil Foto
-                    </button>
-
-                    {{-- Confirm / Retake row (shown after capture) --}}
-                    <div id="register-confirm-actions" style="display:none; gap:0.75rem;">
-                        <button id="retake-register-btn"
-                            style="flex:1; background:rgba(255,255,255,0.05); color:#94a3b8; border:1px solid rgba(255,255,255,0.1); font-weight:900; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:1rem; border-radius:1.25rem; cursor:pointer; transition:all 0.3s;">
-                            Foto Ulang
-                        </button>
-                        <button id="confirm-register-btn"
-                            style="flex:1; background:#10b981; color:white; font-weight:900; font-size:11px; text-transform:uppercase; letter-spacing:0.1em; padding:1rem; border-radius:1.25rem; border:none; cursor:pointer; box-shadow:0 10px 20px -5px rgba(16,185,129,0.4); transition:all 0.3s; display:flex; align-items:center; justify-content:center; gap:0.5rem;">
-                            <svg style="width:1.1rem; height:1.1rem;" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4.5 12.75l6 6 9-13.5" />
-                            </svg>
-                            Simpan Wajah
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
 
         {{-- ═══════════════════════════════════════════════════════════ --}}
         {{-- Info Grid                                                    --}}
@@ -412,7 +322,7 @@
     </div>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/@vladmandic/face-api/dist/face-api.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -433,42 +343,92 @@
         const faceStatusBadge       = document.getElementById('face-status-badge');
         const unrecognizedOverlay   = document.getElementById('unrecognized-overlay');
         const noPhotoOverlay        = document.getElementById('no-photo-overlay');
-        const registeredState       = document.getElementById('registered-state');
 
-        // Register Panel
-        const registerPanel         = document.getElementById('register-panel');
-        const registerVideo         = document.getElementById('register-video');
-        const registerPreview       = document.getElementById('register-preview');
-        const registerLoading       = document.getElementById('register-loading');
-        const registerGuideOverlay  = document.getElementById('register-guide-overlay');
-        const captureRegisterBtn    = document.getElementById('capture-register-btn');
-        const registerConfirmActions= document.getElementById('register-confirm-actions');
-        const retakeRegisterBtn     = document.getElementById('retake-register-btn');
-        const confirmRegisterBtn    = document.getElementById('confirm-register-btn');
-        const registerHint          = document.getElementById('register-hint');
-        const closeRegisterPanelBtn = document.getElementById('close-register-panel-btn');
-        const openRegisterBtn       = document.getElementById('open-register-btn');
-        const openRegisterFromNoPhotoBtn = document.getElementById('open-register-from-no-photo-btn');
-        const retryFromUnrecognizedBtn   = document.getElementById('retry-from-unrecognized-btn');
-        const startAfterRegisterBtn      = document.getElementById('start-after-register-btn');
 
         // ── State ─────────────────────────────────────────────────────────────
         let userLat             = null;
         let userLon             = null;
         let videoStream         = null;
-        let registerStream      = null;
         let detectionInterval   = null;
-        let referenceDescriptor = null;
+        let referenceDescriptors = []; // Array of descriptors for multi-pose matching
         let modelsLoaded        = false;
         let isProcessing        = false;
         let consecutiveMatches  = 0;
         let consecutiveMisses   = 0;
-        let capturedRegisterB64 = null;
 
         const REQUIRED_MATCHES      = 3;
         const MISS_THRESHOLD        = 20;   // frames before showing "unrecognized" overlay
         const FACE_MATCH_THRESHOLD  = 0.55;
-        const MODEL_BASE_URL        = 'https://cdn.jsdelivr.net/npm/@vladmandic/face-api/model';
+        const MODEL_BASE_URL        = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights';
+
+        // ── IndexedDB Cache for Face Descriptors ──────────────────────────────
+        const CACHE_DB_NAME    = 'face-presensi-cache';
+        const CACHE_DB_VERSION = 1;
+        const CACHE_STORE      = 'descriptors';
+        const CACHE_KEY        = 'user-face-descriptors';
+
+        function openCacheDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(CACHE_DB_NAME, CACHE_DB_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const db = e.target.result;
+                    if (!db.objectStoreNames.contains(CACHE_STORE)) {
+                        db.createObjectStore(CACHE_STORE, { keyPath: 'id' });
+                    }
+                };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror   = () => reject(req.error);
+            });
+        }
+
+        async function getCachedDescriptors() {
+            try {
+                const db  = await openCacheDB();
+                return new Promise((resolve) => {
+                    const tx    = db.transaction(CACHE_STORE, 'readonly');
+                    const store = tx.objectStore(CACHE_STORE);
+                    const req   = store.get(CACHE_KEY);
+                    req.onsuccess = () => {
+                        const record = req.result;
+                        if (record && record.descriptors && record.descriptors.length > 0) {
+                            // Convert stored arrays back to Float32Array
+                            const descs = record.descriptors.map(arr => new Float32Array(arr));
+                            resolve(descs);
+                        } else {
+                            resolve(null);
+                        }
+                    };
+                    req.onerror = () => resolve(null);
+                });
+            } catch (e) {
+                console.warn('Cache read failed:', e);
+                return null;
+            }
+        }
+
+        async function saveCachedDescriptors(descriptors) {
+            try {
+                const db    = await openCacheDB();
+                const tx    = db.transaction(CACHE_STORE, 'readwrite');
+                const store = tx.objectStore(CACHE_STORE);
+                // Convert Float32Array to regular arrays for serialization
+                const serialized = descriptors.map(d => Array.from(d));
+                store.put({ id: CACHE_KEY, descriptors: serialized, savedAt: Date.now() });
+            } catch (e) {
+                console.warn('Cache save failed:', e);
+            }
+        }
+
+        async function clearCachedDescriptors() {
+            try {
+                const db    = await openCacheDB();
+                const tx    = db.transaction(CACHE_STORE, 'readwrite');
+                const store = tx.objectStore(CACHE_STORE);
+                store.delete(CACHE_KEY);
+            } catch (e) {
+                console.warn('Cache clear failed:', e);
+            }
+        }
 
         // ── Helpers ───────────────────────────────────────────────────────────
         function setStatus(text, color = '#a78bfa') {
@@ -508,40 +468,122 @@
             }
         }
 
-        // ── Load reference descriptor ─────────────────────────────────────────
+        // ── Load reference descriptors (multi-pose, with IndexedDB cache) ────────
         async function loadReferenceDescriptor() {
             try {
-                loadingText.innerText = 'Memuat Foto Referensi...';
-                const resp = await fetch('/face-reference', { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
+                // 1. Try loading from IndexedDB cache first (instant!)
+                if (referenceDescriptors.length === 0) {
+                    showBadge('Memuat data wajah tersimpan...', 'info');
+                    const cached = await getCachedDescriptors();
+                    if (cached && cached.length > 0) {
+                        referenceDescriptors = cached;
+                        console.log(`Loaded ${cached.length} cached face descriptors`);
+                        showBadge('Data wajah dimuat dari cache ✓', 'success');
+                        return true;
+                    }
+                }
+
+                // 2. No cache — fetch from server
+                showBadge('Memuat foto referensi dari server...', 'info');
+                const resp = await fetch(`/face-reference?t=${Date.now()}`, { headers: { 'X-Requested-With': 'XMLHttpRequest' } });
                 const data = await resp.json();
 
                 if (!data.success) {
-                    // No photo registered → show no-photo overlay
+                    // No face registered — stop camera and show register panel
                     stopVideoStream();
                     idleState.style.display = 'none';
                     loadingState.style.display = 'none';
+                    detectionOverlay.style.display = 'none';
                     noPhotoOverlay.style.display = 'flex';
+                    hideBadge();
                     setStatus('Wajah belum terdaftar', '#f59e0b');
                     startBtn.classList.remove('hidden');
                     stopBtn.classList.add('hidden');
                     stopBtn.style.display = 'none';
+                    new FilamentNotification().title('Wajah Belum Terdaftar').body('Silakan daftarkan wajah Anda terlebih dahulu.').warning().send();
                     return false;
                 }
 
-                loadingText.innerText = 'Menganalisis Wajah Referensi...';
-                const img = await faceapi.fetchImage(data.photo_url);
-                const detection = await faceapi
-                    .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions())
-                    .withFaceLandmarks(true)
-                    .withFaceDescriptor();
+                referenceDescriptors = [];
 
-                if (!detection) {
-                    // Photo exists but no face detected in it
+                // Helper: load image with fallback methods
+                async function loadImageRobust(url) {
+                    try {
+                        return await faceapi.fetchImage(url);
+                    } catch (e) {
+                        console.warn('faceapi.fetchImage failed, trying manual load:', url, e);
+                        // Fallback: load image manually
+                        return new Promise((resolve, reject) => {
+                            const img = new Image();
+                            img.crossOrigin = 'anonymous';
+                            img.onload = () => resolve(img);
+                            img.onerror = (err) => reject(new Error('Image load failed: ' + url));
+                            img.src = url;
+                        });
+                    }
+                }
+
+                if (data.multi_pose && data.photos) {
+                    // Load descriptors from all 3 pose photos
+                    const poseEntries = Object.entries(data.photos);
+                    console.log('Loading multi-pose photos:', data.photos);
+                    for (let i = 0; i < poseEntries.length; i++) {
+                        const [pose, url] = poseEntries[i];
+                        showBadge(`Menganalisis wajah ${pose === 'front' ? 'depan' : pose === 'right' ? 'kanan' : 'kiri'} (${i+1}/3)...`, 'info');
+                        try {
+                            console.log(`Loading ${pose} face from: ${url}`);
+                            const img = await loadImageRobust(url);
+                            console.log(`Image loaded for ${pose}: ${img.width}x${img.height}`);
+                            const detection = await faceapi
+                                .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.3 }))
+                                .withFaceLandmarks(true)
+                                .withFaceDescriptor();
+                            if (detection) {
+                                referenceDescriptors.push(detection.descriptor);
+                                console.log(`✓ Face detected in ${pose} photo (score: ${detection.detection.score.toFixed(3)})`);
+                            } else {
+                                console.warn(`✗ No face detected in ${pose} photo`);
+                            }
+                        } catch (e) {
+                            console.error(`Failed to load/process ${pose} face:`, e);
+                        }
+                    }
+                } else {
+                    // Fallback: single photo
+                    showBadge('Menganalisis wajah referensi...', 'info');
+                    console.log('Loading single photo from:', data.photo_url);
+                    try {
+                        const img = await loadImageRobust(data.photo_url);
+                        console.log(`Image loaded: ${img.width}x${img.height}`);
+                        const detection = await faceapi
+                            .detectSingleFace(img, new faceapi.TinyFaceDetectorOptions({ scoreThreshold: 0.3 }))
+                            .withFaceLandmarks(true)
+                            .withFaceDescriptor();
+                        if (detection) {
+                            referenceDescriptors.push(detection.descriptor);
+                            console.log(`✓ Face detected (score: ${detection.detection.score.toFixed(3)})`);
+                        } else {
+                            console.warn('✗ No face detected in reference photo');
+                        }
+                    } catch (e) {
+                        console.error('Failed to load/process reference photo:', e);
+                    }
+                }
+
+                if (referenceDescriptors.length === 0) {
+                    // Photo(s) exist but no face detected in any — stop camera
                     stopVideoStream();
                     idleState.style.display = 'none';
                     loadingState.style.display = 'none';
+                    detectionOverlay.style.display = 'none';
+                    
+                    const titleEl = noPhotoOverlay.querySelector('p[style*="font-size:13px"]');
+                    const descEl = noPhotoOverlay.querySelector('p[style*="font-size:10px"]');
+                    if(titleEl) titleEl.innerText = "Foto Profil Tidak Valid";
+                    if(descEl) descEl.innerHTML = "Wajah Anda tidak terdeteksi secara jelas pada foto yang didaftarkan.<br>Silakan daftar ulang dengan pencahayaan yang lebih baik.";
+                    
                     noPhotoOverlay.style.display = 'flex';
-                    noPhotoOverlay.querySelector('p:nth-child(2)').innerText = 'Foto profil ada, namun wajah tidak terdeteksi. Daftarkan ulang wajah Anda.';
+                    hideBadge();
                     setStatus('Foto profil tidak valid', '#f59e0b');
                     startBtn.classList.remove('hidden');
                     stopBtn.classList.add('hidden');
@@ -549,11 +591,15 @@
                     return false;
                 }
 
-                referenceDescriptor = detection.descriptor;
+                // 3. Save descriptors to IndexedDB cache for next time
+                await saveCachedDescriptors(referenceDescriptors);
+                console.log(`Cached ${referenceDescriptors.length} face descriptors to IndexedDB`);
+
                 return true;
             } catch (e) {
                 console.error('Reference load error:', e);
                 new FilamentNotification().title('Gagal memuat foto referensi').body('Coba lagi.').danger().send();
+                stopEverything();
                 return false;
             }
         }
@@ -602,7 +648,6 @@
             successState.style.display = 'none';
             unrecognizedOverlay.style.display = 'none';
             noPhotoOverlay.style.display = 'none';
-            registeredState.style.display = 'none';
             hideBadge();
             faceOval.className = 'face-ring-active';
             faceOval.style.borderColor = 'rgba(124,58,237,0.5)';
@@ -647,21 +692,33 @@
 
             if (!detection) {
                 consecutiveMatches = 0;
-                consecutiveMisses++;
+                // Do not increment consecutiveMisses here so it waits indefinitely until a face is detected
                 showBadge('Posisikan wajah di depan kamera', 'info');
-                setStatus('Mendeteksi wajah...', '#7c3aed');
+                setStatus('Menunggu wajah...', '#7c3aed');
                 faceOval.className = 'face-ring-active';
                 faceOval.style.borderColor = 'rgba(124,58,237,0.5)';
                 faceOval.style.boxShadow = '0 0 30px rgba(124,58,237,0.2)';
+                const scanLine = document.getElementById('scan-line');
+                if (scanLine) scanLine.style.display = 'none';
                 return;
             }
+
+            // Face is detected, start scanning visually
+            const scanLine = document.getElementById('scan-line');
+            if (scanLine) scanLine.style.display = 'block';
 
             // Draw bounding box
             const dims = faceapi.matchDimensions(faceCanvas, faceVideo, true);
             const resized = faceapi.resizeResults(detection, dims);
             faceapi.draw.drawDetections(faceCanvas, resized);
 
-            const distance = faceapi.euclideanDistance(referenceDescriptor, detection.descriptor);
+            // Compare against all reference descriptors, pick best match
+            let bestDistance = Infinity;
+            for (const refDesc of referenceDescriptors) {
+                const d = faceapi.euclideanDistance(refDesc, detection.descriptor);
+                if (d < bestDistance) bestDistance = d;
+            }
+            const distance = bestDistance;
             const isMatch  = distance <= FACE_MATCH_THRESHOLD;
 
             if (isMatch) {
@@ -677,8 +734,6 @@
                 if (consecutiveMatches >= REQUIRED_MATCHES) {
                     isProcessing = true;
                     clearInterval(detectionInterval);
-                    const snapshot = captureSnapshot(faceVideo);
-
                     detectionOverlay.style.display = 'none';
                     successState.style.display = 'flex';
                     hideBadge();
@@ -689,6 +744,7 @@
                         setTimeout(stopEverything, 1500);
                         return;
                     }
+                    const snapshot = captureSnapshot(faceVideo);
                     @this.call('processAttendance', userLat, userLon, snapshot);
                 }
             } else {
@@ -725,14 +781,25 @@
             idleState.style.display = 'none';
             unrecognizedOverlay.style.display = 'none';
             noPhotoOverlay.style.display = 'none';
-            registeredState.style.display = 'none';
             loadingState.style.display = 'flex';
             setStatus('Mempersiapkan...', '#7c3aed');
             consecutiveMatches = 0;
             consecutiveMisses  = 0;
             isProcessing       = false;
 
-            // 1. GPS
+            // 1. Start camera FIRST — user sees themselves immediately
+            loadingText.innerText = 'Membuka Kamera...';
+            const camOk = await startCamera();
+            if (!camOk) { stopEverything(); return; }
+
+            // Show camera feed immediately with detection overlay
+            faceVideo.style.display = 'block';
+            loadingState.style.display = 'none';
+            detectionOverlay.style.display = 'flex';
+            setStatus('Kamera aktif — memuat AI...', '#7c3aed');
+            showBadge('Mempersiapkan verifikasi...', 'info');
+
+            // 2. GPS (in background while camera is showing)
             if (!userLat || !userLon) {
                 setStatus('Meminta akses lokasi...', '#7c3aed');
                 const geoOk = await new Promise(resolve => {
@@ -747,176 +814,45 @@
                 }
             }
 
-            // 2. Load AI models
+            // 3. Load AI models (camera is already showing)
+            setStatus('Memuat model AI...', '#7c3aed');
+            showBadge('Memuat model pengenalan wajah...', 'info');
             const modelsOk = await loadModels();
             if (!modelsOk) {
                 new FilamentNotification().title('Gagal memuat model AI').body('Pastikan koneksi internet stabil dan coba lagi.').danger().send();
                 stopEverything(); return;
             }
 
-            // 3. Load reference
+            // 4. Load reference descriptor (camera still active)
+            setStatus('Memuat data wajah...', '#7c3aed');
+            showBadge('Memuat foto referensi wajah...', 'info');
             const refOk = await loadReferenceDescriptor();
             if (!refOk) return; // loadReferenceDescriptor handles UI itself
 
-            // 4. Start camera
-            loadingText.innerText = 'Membuka Kamera...';
-            const camOk = await startCamera();
-            if (!camOk) { stopEverything(); return; }
-
-            // 5. Show detection UI
-            faceVideo.style.display = 'block';
-            loadingState.style.display = 'none';
-            detectionOverlay.style.display = 'flex';
+            // 5. Start detection loop — camera was already active
             setStatus('Mendeteksi wajah...', '#7c3aed');
+            hideBadge();
 
             detectionInterval = setInterval(runDetectionLoop, 500);
         }
 
-        // ── Register Face Panel ───────────────────────────────────────────────
-        async function openRegisterPanel() {
-            // Hide overlays
-            unrecognizedOverlay.style.display = 'none';
-            noPhotoOverlay.style.display = 'none';
 
-            // Show panel
-            registerPanel.classList.remove('hidden');
-            registerPanel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-
-            // Reset panel state
-            registerPreview.style.display = 'none';
-            registerVideo.style.display = 'block';
-            captureRegisterBtn.style.display = 'none';
-            registerConfirmActions.style.display = 'none';
-            registerLoading.style.display = 'flex';
-            registerGuideOverlay.style.display = 'none';
-            registerHint.innerText = 'Memuat kamera depan...';
-            capturedRegisterB64 = null;
-
-            // Start camera for registration
-            try {
-                registerStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: { ideal: 'user' }, width: { ideal: 640 }, height: { ideal: 640 } },
-                    audio: false
-                });
-            } catch (e) {
-                try { registerStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false }); }
-                catch (e2) {
-                    new FilamentNotification().title('Gagal Mengakses Kamera').body('Mohon izinkan akses kamera.').danger().send();
-                    registerPanel.classList.add('hidden');
-                    return;
-                }
-            }
-
-            registerVideo.srcObject = registerStream;
-            registerVideo.onloadedmetadata = () => {
-                registerVideo.play().catch(() => {});
-                registerLoading.style.display = 'none';
-                registerGuideOverlay.style.display = 'flex';
-                captureRegisterBtn.style.display = 'flex';
-                registerHint.innerText = 'Posisikan wajah di dalam lingkaran';
-            };
-            if (registerVideo.readyState >= 2) registerVideo.onloadedmetadata();
-        }
-
-        function stopRegisterCamera() {
-            if (registerStream) { registerStream.getTracks().forEach(t => t.stop()); registerStream = null; }
-        }
-
-        function captureRegisterPhoto() {
-            capturedRegisterB64 = captureSnapshot(registerVideo);
-            registerPreview.src = capturedRegisterB64;
-            registerPreview.style.display = 'block';
-            registerVideo.style.display   = 'none';
-            registerGuideOverlay.style.display = 'none';
-            captureRegisterBtn.style.display   = 'none';
-            registerConfirmActions.style.display = 'flex';
-            registerHint.innerText = 'Apakah foto wajah Anda sudah jelas?';
-            stopRegisterCamera();
-        }
-
-        function closeRegisterPanel() {
-            stopRegisterCamera();
-            registerPanel.classList.add('hidden');
-            capturedRegisterB64 = null;
-        }
 
         // ── Event Listeners ───────────────────────────────────────────────────
         startBtn.addEventListener('click', startVerification);
         stopBtn.addEventListener('click', stopEverything);
 
-        // Open register panel from overlays
-        openRegisterBtn.addEventListener('click', openRegisterPanel);
-        openRegisterFromNoPhotoBtn.addEventListener('click', openRegisterPanel);
-
         // Retry verification from unrecognized overlay
-        retryFromUnrecognizedBtn.addEventListener('click', () => {
-            unrecognizedOverlay.style.display = 'none';
-            startVerification();
-        });
-
-        // Register panel controls
-        closeRegisterPanelBtn.addEventListener('click', () => {
-            closeRegisterPanel();
-            // Restore idle or show noPhoto depending on state
-            idleState.style.display = 'flex';
-        });
-
-        captureRegisterBtn.addEventListener('click', captureRegisterPhoto);
-
-        retakeRegisterBtn.addEventListener('click', async () => {
-            registerPreview.style.display = 'none';
-            registerVideo.style.display   = 'block';
-            captureRegisterBtn.style.display  = 'flex';
-            registerConfirmActions.style.display = 'none';
-            registerHint.innerText = 'Memuat kamera...';
-            capturedRegisterB64 = null;
-
-            try {
-                registerStream = await navigator.mediaDevices.getUserMedia({
-                    video: { facingMode: { ideal: 'user' } }, audio: false
-                });
-            } catch(e) {
-                registerStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
-            }
-            registerVideo.srcObject = registerStream;
-            registerVideo.onloadedmetadata = () => {
-                registerVideo.play().catch(() => {});
-                registerGuideOverlay.style.display = 'flex';
-                registerHint.innerText = 'Posisikan wajah di dalam lingkaran';
-            };
-            if (registerVideo.readyState >= 2) registerVideo.onloadedmetadata();
-        });
-
-        confirmRegisterBtn.addEventListener('click', () => {
-            if (!capturedRegisterB64) return;
-            stopRegisterCamera();
-            registerPanel.classList.add('hidden');
-            // Call Livewire to save face
-            @this.call('registerFace', capturedRegisterB64);
-        });
-
-        // After verified face → start verification again
-        startAfterRegisterBtn.addEventListener('click', () => {
-            registeredState.style.display = 'none';
-            referenceDescriptor = null; // Force reload reference
-            startVerification();
-        });
+        const retryFromUnrecognizedBtn = document.getElementById('retry-from-unrecognized-btn');
+        if (retryFromUnrecognizedBtn) {
+            retryFromUnrecognizedBtn.addEventListener('click', () => {
+                unrecognizedOverlay.style.display = 'none';
+                startVerification();
+            });
+        }
 
         // Livewire events
         window.addEventListener('attendance-success', () => setTimeout(stopEverything, 1500));
-        window.addEventListener('face-registered', () => {
-            // Show success state inside camera area
-            referenceDescriptor = null; // Reset so it reloads on next verification
-            idleState.style.display     = 'none';
-            loadingState.style.display  = 'none';
-            unrecognizedOverlay.style.display = 'none';
-            noPhotoOverlay.style.display      = 'none';
-            registeredState.style.display     = 'flex';
-            startBtn.classList.remove('hidden');
-            stopBtn.classList.add('hidden');
-            stopBtn.style.display = 'none';
-            setStatus('Wajah terdaftar!', '#10b981');
-        });
 
         // Secure context check
         if (!window.isSecureContext && !['localhost','127.0.0.1'].includes(window.location.hostname)) {
