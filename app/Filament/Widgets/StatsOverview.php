@@ -13,6 +13,7 @@ class StatsOverview extends BaseWidget
 {
     use InteractsWithPageFilters;
     protected static ?int $sort = 1;
+    protected static bool $isLazy = false;
 
     public static function canView(): bool
     {

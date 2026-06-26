@@ -48,7 +48,7 @@ class AttendancesTable
                             ->modalSubmitAction(false)
                             ->modalCancelAction(false)
                     )
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('check_out_time')
                     ->time('H:i')
                     ->sortable()
@@ -71,7 +71,7 @@ class AttendancesTable
                             ->modalSubmitAction(false)
                             ->modalCancelAction(false)
                     )
-                    ->toggleable(),
+                    ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
                     ->toggleable(),

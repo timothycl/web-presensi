@@ -199,8 +199,8 @@
 
                     {{-- Title --}}
                     <div style="text-align:center;">
-                        <p style="color:#f87171; font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:0.2em; margin:0 0 0.5rem;">Wajah Tidak Dikenali</p>
-                        <p style="color:#64748b; font-size:10px; font-weight:600; line-height:1.6; margin:0; max-width:260px;">Wajah Anda tidak cocok dengan data yang terdaftar.<br>Daftarkan wajah Anda untuk melanjutkan.</p>
+                        <p style="color:#f87171; font-size:13px; font-weight:900; text-transform:uppercase; letter-spacing:0.2em; margin:0 0 0.5rem;">Ditolak Wajah Tidak Sesuai</p>
+                        <p style="color:#64748b; font-size:10px; font-weight:600; line-height:1.6; margin:0; max-width:260px;">Wajah yang terdeteksi tidak cocok dengan pendaftaran wajah.<br>Proses presensi dibatalkan.</p>
                     </div>
 
                     {{-- Buttons --}}
@@ -322,7 +322,7 @@
     </div>
 
     @push('scripts')
-    <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
+    <script src="https://unpkg.com/face-api.js@0.22.2/dist/face-api.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
 
@@ -359,7 +359,7 @@
         const REQUIRED_MATCHES      = 3;
         const MISS_THRESHOLD        = 20;   // frames before showing "unrecognized" overlay
         const FACE_MATCH_THRESHOLD  = 0.55;
-        const MODEL_BASE_URL        = 'https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights';
+        const MODEL_BASE_URL        = 'https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights';
 
         // ── IndexedDB Cache for Face Descriptors ──────────────────────────────
         const CACHE_DB_NAME    = 'face-presensi-cache';
@@ -752,7 +752,7 @@
                 consecutiveMisses++;
                 const pct = Math.round((1 - distance) * 100);
                 showBadge(`Wajah tidak cocok (${pct}%)`, 'warning');
-                setStatus('Wajah tidak dikenali', '#f59e0b');
+                setStatus('Ditolak wajah tidak sesuai', '#f59e0b');
                 faceOval.className = '';
                 faceOval.style.borderColor = 'rgba(245,158,11,0.6)';
                 faceOval.style.boxShadow = '0 0 30px rgba(245,158,11,0.3)';
@@ -765,7 +765,7 @@
                     detectionOverlay.style.display = 'none';
                     unrecognizedOverlay.style.display = 'flex';
                     hideBadge();
-                    setStatus('Wajah tidak dikenali', '#ef4444');
+                    setStatus('Ditolak wajah tidak sesuai', '#ef4444');
                     startBtn.classList.remove('hidden');
                     stopBtn.classList.add('hidden');
                     stopBtn.style.display = 'none';

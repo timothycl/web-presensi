@@ -12,6 +12,7 @@ class AttendanceChartWidget extends ChartWidget
     use InteractsWithPageFilters;
     protected ?string $heading = 'Statistik Kehadiran 30 Hari Terakhir';
     protected static ?int $sort = 2;
+    protected static bool $isLazy = false;
 
     public static function canView(): bool
     {

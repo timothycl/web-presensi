@@ -441,6 +441,23 @@ public function panel(Panel $panel): Panel
                             z-index: 99 !important;
                         }
 
+                        /* Ensure open modals escape stacking contexts and sit at the very front */
+                        .fi-header:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])),
+                        .fi-page-header:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])),
+                        form:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])),
+                        .fi-card:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])),
+                        .fi-ta-ctn:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])),
+                        .fi-page > *:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])),
+                        .fi-main-ctn > *:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])) {
+                            z-index: 999999 !important;
+                        }
+                        
+                        /* Send Topbar back when modal is open so it can be covered */
+                        body:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])) .fi-topbar-ctn,
+                        body:has(.fi-modal:not(.hidden):not([style*="display: none"]):not([style*="display:none"])) .fi-topbar {
+                            z-index: 40 !important;
+                        }
+
                         /* 
                          * CRITICAL FIX FOR DROPDOWNS OVERLAPPING:
                          * When elements have backdrop-filter, they create new stacking contexts.
@@ -540,6 +557,16 @@ public function panel(Panel $panel): Panel
                             border: 1px solid rgba(255, 255, 255, 0.1) !important;
                             box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5) !important;
                             border-radius: 1.5rem !important;
+                        }
+
+                        /* Fix Nested Backdrop Filter rendering bug in Chrome inside Modals */
+                        .fi-modal-window .fi-modal-header,
+                        .fi-modal-window .fi-modal-footer,
+                        .fi-modal-window .fi-ac-btn-action,
+                        .fi-modal-window .fi-btn,
+                        .fi-modal-window .fi-input-wrp {
+                            backdrop-filter: none !important;
+                            -webkit-backdrop-filter: none !important;
                         }
 
                         .fi-dropdown-list-item:hover, .fi-dropdown-list-item:focus {
